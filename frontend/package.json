@@ -1,6 +1,7 @@
 {
   "name": "tailwind-react-starter-pack",
   "version": "0.1.0",
+  "proxy": "http://localhost:4000",
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.1",

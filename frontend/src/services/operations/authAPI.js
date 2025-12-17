@@ -7,52 +7,57 @@ const {
     LOGIN_API
 } =authEndpoints;
 
-export function signUp(signUpData,navigate,setLoading){
-    const signIn=async ()=>{
-       try{
-        setLoading(true);
-        const response=await apiConnector("post",SIGNUP_API,signUpData);
-        //console.log("Signup response.....",response);
+export function signUp(signUpData, navigate, setLoading) {
+    const signIn = async () => {
+        try {
+            setLoading(true);
+            const response = await apiConnector("post", SIGNUP_API, signUpData);
 
-        if(!response){
-            throw new Error(response.data.message);
+            if (!response || !response.data) {  // ✅ check if data exists
+                throw new Error("No response from server");
+            }
+
+            toast.success("Account Created Successfully");
+            navigate("/");
+            toast.success("Please login");
+
+        } catch (error) {
+            console.log("SIGNUP ERROR.....", error);
+
+            // safer error handling
+            const msg = error?.response?.data?.message || error.message || "Something went wrong";
+            toast.error(msg);
+            navigate("/signup");
         }
-        toast.success("Account Created Successfully");
-        navigate("/");
-        toast.success("Please login");
-       }
-       catch(error){
-        console.log("SIGNUP ERROR.....",error);
-        toast.error(error.response.data.message)
-        navigate("/signup")
-       }
-       setLoading(false);
-    }
+        setLoading(false);
+    };
     signIn();
 }
 
-export function logIn(loginData,navigate,setLoading){
-    const login=async ()=>{
+export function logIn(loginData, navigate, setLoading) {
+    const login = async () => {
         setLoading(true);
-        try{
-            const response=await apiConnector("post",LOGIN_API,loginData);
+        try {
+            const response = await apiConnector("post", LOGIN_API, loginData);
 
-            if(!response){
-                throw new Error("Login response....",response);
+            if (!response || !response.data) {
+                throw new Error("No response from server");
             }
+
             toast.success("Logged in Successfully");
-            localStorage.setItem("token",JSON.stringify(response.data.token));
-            localStorage.setItem("user",response.data.user);
+            localStorage.setItem("token", JSON.stringify(response.data.token));
+            localStorage.setItem("user", JSON.stringify(response.data.user));
             navigate("/feed");
-        }
-        catch(error){
-            console.log("Errror occured while log in");
-            console.log(error);
+
+        } catch (error) {
+            console.log("Error occurred while log in", error);
+
+            const msg = error?.response?.data?.message || error.message || "Something went wrong";
+            toast.error(msg);
             navigate("/");
-            toast.error(error.response.data.message)
         }
         setLoading(false);
-    }
+    };
     login();
 }
 
